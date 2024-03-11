@@ -16,6 +16,7 @@ import com.google.firebase.auth.FirebaseUser;
 
 public class SplashActivity extends AppCompatActivity {
     ActivitySplashBinding binding;
+    FirebaseAuth auth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,6 +25,8 @@ public class SplashActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
         int color = ContextCompat.getColor(this, R.color.bg_splash);
         getWindow().setStatusBarColor(color);
+        auth = FirebaseAuth.getInstance();
+        FirebaseUser firebaseUser = auth.getCurrentUser();
 
 
         new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
@@ -39,8 +42,14 @@ public class SplashActivity extends AppCompatActivity {
             public void run() {
                 binding.img.setVisibility(View.GONE);
                 binding.progressbar.setVisibility(View.VISIBLE);
-                startActivity(new Intent(SplashActivity.this, LoginActivity.class));
-                finish();
+                if(firebaseUser != null){
+                    startActivity(new Intent(SplashActivity.this, MainActivity.class));
+                    finish();
+                }
+                else{
+                    startActivity(new Intent(SplashActivity.this, LoginActivity.class));
+                    finish();
+                }
             }
         }, 3000);
 

@@ -1,66 +1,112 @@
 package com.example.hotelmanager.fragments;
 
+import android.app.AlertDialog;
+import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavAction;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 
 import com.example.hotelmanager.R;
+import com.example.hotelmanager.activitys.ChangePasswordActivity;
+import com.example.hotelmanager.activitys.LoginActivity;
+import com.example.hotelmanager.activitys.PolicyActivity;
+import com.example.hotelmanager.activitys.UpdateInfoActivity;
+import com.example.hotelmanager.adapter.ListViewAdapter;
+import com.example.hotelmanager.databinding.FragmentAccountBinding;
+import com.example.hotelmanager.model.ListViewModel;
+import com.google.firebase.auth.FirebaseAuth;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link AccountFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+import java.util.ArrayList;
+
+
 public class AccountFragment extends Fragment {
-
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
-    public AccountFragment() {
-        // Required empty public constructor
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment AccountFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static AccountFragment newInstance(String param1, String param2) {
-        AccountFragment fragment = new AccountFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-    }
+private FragmentAccountBinding binding;
+ListViewAdapter listViewAdapter;
+ArrayList<ListViewModel> listViewModels = new ArrayList<>();
+ListViewModel listViewModel;
+FirebaseAuth auth;
+NavController navController;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_account, container, false);
+       binding = FragmentAccountBinding.inflate(inflater,container,false);
+       return binding.getRoot();
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        iNit(view);
+
+        int[] images = {R.drawable.img_10,R.drawable.img_11,R.drawable.img_12,R.drawable.baseline_logout_24};
+        String[] labels ={"Đổi mật khẩu mới","Cập nhật thông tin","Điều khoản & chính sách","Đăng xuất"};
+
+        listViewModels.clear();
+
+        for(int i = 0;i<images.length;i++){
+            listViewModel = new ListViewModel(images[i],labels[i]);
+            listViewModels.add(listViewModel);
+        }
+        listViewAdapter = new ListViewAdapter(requireContext(),listViewModels);
+        binding.listview.setAdapter(listViewAdapter);
+        binding.listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+                switch (position){
+                    case 0:
+                        Intent changePass = new Intent(requireContext(), ChangePasswordActivity.class);
+                        startActivity(changePass);
+                        break;
+                    case 1:
+                        Intent updateInfo = new Intent(requireContext(), UpdateInfoActivity.class);
+                        startActivity(updateInfo);
+                        break;
+                    case 2:
+                        Intent policy = new Intent(requireContext(), PolicyActivity.class);
+                        startActivity(policy);
+                        break;
+                    case 3:
+                        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+                        builder.setMessage("Bạn có muốn đăng xuất?");
+                        builder.setPositiveButton("Có",(dialog,which)->{
+                            auth.signOut();
+                            startActivity(new Intent(requireContext(), LoginActivity.class));
+                            requireActivity().finish();
+                            dialog.dismiss();
+
+
+                        });
+                        builder.setNegativeButton("Không",(dialog,which)->{
+                            dialog.dismiss();
+                        });
+                        builder.create().show();
+                        break;
+
+                }
+            }
+        });
+
+        //********************Action btn back*****************
+        binding.btnBack.setOnClickListener(v->{
+            navController.navigateUp();
+        });
+    }
+
+    private void iNit(View view) {
+        auth = FirebaseAuth.getInstance();
+        navController = Navigation.findNavController(view);
     }
 }

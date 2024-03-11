@@ -6,4 +6,7 @@
     <color name="bg_edt_login">#E5E5E5</color>
     <color name="color_success">#00BFA5</color>
     <color name="red_error">#C51162</color>
+    <color name="black_custom">#01070F</color>
+    <color name="email_color">#898C8F</color>
+    <color name="grey">#7F7C7C</color>
 </resources>
