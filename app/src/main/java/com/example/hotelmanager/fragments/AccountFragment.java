@@ -15,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Toast;
 
 import com.example.hotelmanager.R;
 import com.example.hotelmanager.activitys.ChangePasswordActivity;
@@ -25,6 +26,11 @@ import com.example.hotelmanager.adapter.ListViewAdapter;
 import com.example.hotelmanager.databinding.FragmentAccountBinding;
 import com.example.hotelmanager.model.ListViewModel;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
@@ -50,6 +56,9 @@ NavController navController;
         super.onViewCreated(view, savedInstanceState);
 
         iNit(view);
+
+        //getInfo
+        fetchDataInFo();
 
         int[] images = {R.drawable.img_10,R.drawable.img_11,R.drawable.img_12,R.drawable.baseline_logout_24};
         String[] labels ={"Đổi mật khẩu mới","Cập nhật thông tin","Điều khoản & chính sách","Đăng xuất"};
@@ -103,6 +112,32 @@ NavController navController;
         binding.btnBack.setOnClickListener(v->{
             navController.navigateUp();
         });
+    }
+
+    private void fetchDataInFo() {
+        FirebaseUser currentUser = auth.getCurrentUser();
+        if(currentUser != null){
+            FirebaseDatabase.getInstance().getReference("admin")
+                    .child(currentUser.getUid())
+                    .addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            if(snapshot.exists()){
+                                String nameHotel = snapshot.child("nameHotel").getValue(String.class);
+                                binding.tvNameHotel.setText(nameHotel);
+                                binding.tvEmail.setText(currentUser.getEmail());
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+                            Toast.makeText(requireContext(),error.getMessage(),Toast.LENGTH_SHORT).show();
+
+                        }
+                    });
+        }
+
+
     }
 
     private void iNit(View view) {

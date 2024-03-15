@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,6 +25,9 @@ import com.example.hotelmanager.R;
 import com.example.hotelmanager.activitys.NotifiRoomCreatedActivity;
 import com.example.hotelmanager.databinding.FragmentAddBinding;
 import com.example.hotelmanager.model.Room;
+import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
@@ -42,6 +46,7 @@ public class AddFragment extends Fragment {
     private StorageReference storageReference;
     private DatabaseReference databaseReference;
     private NavController navController;
+    private FirebaseAuth auth;
     private final ActivityResultLauncher<Intent> launcher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(), result -> {
                 if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
@@ -91,9 +96,20 @@ public class AddFragment extends Fragment {
 
         // neu thanh cong thi se thuc thi cau lenh nay
         binding.btnCreateRoom.setOnClickListener(v -> {
-            pushDataToFirebase();
-            startActivity(new Intent(getActivity(), NotifiRoomCreatedActivity.class));
-            getActivity().finish();
+
+            if(checkInputs()){
+                pushDataToFirebase();
+                startActivity(new Intent(getActivity(), NotifiRoomCreatedActivity.class));
+                getActivity().finish();
+            }
+            else{
+                Toast.makeText(requireContext(),"Vui lòng điền đầy đủ thông tin!",Toast.LENGTH_SHORT).show();
+            }
+
+
+
+
+
         });
 
         //Action cho nut btn back
@@ -103,9 +119,24 @@ public class AddFragment extends Fragment {
     }
 
     private void iNit(View view) {
+        auth = FirebaseAuth.getInstance();
+        FirebaseUser currentUser = auth.getCurrentUser();
         navController = Navigation.findNavController(view);
-        databaseReference = FirebaseDatabase.getInstance().getReference().child("Rooms");
-        storageReference = FirebaseStorage.getInstance().getReference().child("room_images");
+        if(currentUser != null){
+            databaseReference = FirebaseDatabase.getInstance().getReference().child("Rooms").child(currentUser.getUid());
+            storageReference = FirebaseStorage.getInstance().getReference().child("room_images");
+        }
+
+    }
+
+    //Kiem tra input nhap
+    private boolean checkInputs() {
+        String nameRoom = binding.edtNameRoom.getText().toString().trim();
+        String priceRoom = binding.edtPriceRoom.getText().toString().trim();
+        String descriptionRoom = binding.edtDescription.getText().toString().trim();
+
+        return !TextUtils.isEmpty(nameRoom) && !TextUtils.isEmpty(priceRoom) &&
+                !TextUtils.isEmpty(descriptionRoom) && !selectedImaes.isEmpty();
     }
 
     private void pushDataToFirebase() {
@@ -113,17 +144,21 @@ public class AddFragment extends Fragment {
         String priceRoom = binding.edtPriceRoom.getText().toString().trim();
         String descriptonRoom = binding.edtDescription.getText().toString().trim();
         String roomType = selectedRoomTypes;
+
+
         //Dat su kien cho cac checkbox
         List<String> checkBoxValues = new ArrayList<>();
         if (binding.checkBtnBancong.isChecked()) {
             checkBoxValues.add("Có ban công");
         }
-        if (binding.checkBtnMaylanhroom.isChecked()) {
+      if (binding.checkBtnMaylanhroom.isChecked()) {
             checkBoxValues.add("Có máy lạnh");
         }
-        if (binding.checkBtnViewcity.isChecked()) {
+       if (binding.checkBtnViewcity.isChecked()) {
             checkBoxValues.add("Có view thành phố");
         }
+
+
 
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(requireContext(),
                 R.array.room_types, android.R.layout.simple_spinner_item

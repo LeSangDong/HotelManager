@@ -1,24 +1,18 @@
-package com.example.hotelmanager.fragments;
+package com.example.hotelmanager.activitys;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.content.Intent;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
-import androidx.recyclerview.widget.LinearLayoutManager;
-
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.example.hotelmanager.R;
-import com.example.hotelmanager.activitys.BookingRoomActivity;
 import com.example.hotelmanager.adapter.ListRoomAdapter;
-import com.example.hotelmanager.databinding.FragmentRoomBinding;
+import com.example.hotelmanager.databinding.ActivityOrderRoomBinding;
 import com.example.hotelmanager.listener.IRecyclerView;
 import com.example.hotelmanager.listener.IRoomLoadListener;
 import com.example.hotelmanager.model.Room;
@@ -32,34 +26,24 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
-
-public class RoomFragment extends Fragment implements IRoomLoadListener {
-
-    private FragmentRoomBinding binding;
+public class OrderRoomActivity extends AppCompatActivity implements IRoomLoadListener {
+    private ActivityOrderRoomBinding binding;
     IRoomLoadListener roomLoadListener;
-    private NavController navController;
     private FirebaseAuth auth;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-       binding = FragmentRoomBinding.inflate(inflater,container,false);
-       return binding.getRoot();
-    }
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        binding = ActivityOrderRoomBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+        getWindow().setStatusBarColor(ContextCompat.getColor(this,R.color.bg_splash));
 
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-
-        iNit(view);
-        loadListRoomFromFirebase();
-
-        //Action cho nut back
         binding.btnBack.setOnClickListener(v->{
-            navController.navigateUp();
-
+            finish();
         });
+
+        iNit();
+        loadListRoomFromFirebase();
     }
 
     private void loadListRoomFromFirebase() {
@@ -93,38 +77,35 @@ public class RoomFragment extends Fragment implements IRoomLoadListener {
                     });
 
         }
-
     }
 
-    private void iNit(View view) {
+    private void iNit() {
+        roomLoadListener = this;
         auth = FirebaseAuth.getInstance();
         binding.progressBar.setVisibility(View.VISIBLE);
-        navController = Navigation.findNavController(view);
-        roomLoadListener = this;
-        binding.recyclerviewListRoom.setHasFixedSize(true);
-        binding.recyclerviewListRoom.setLayoutManager(new LinearLayoutManager(requireContext()));
-
+        binding.recyclerview.setHasFixedSize(true);
+        binding.recyclerview.setLayoutManager(new LinearLayoutManager(this));
     }
 
     @Override
     public void onRoomLoadSuccess(List<Room> roomList) {
         binding.progressBar.setVisibility(View.GONE);
-        ListRoomAdapter listRoomAdapter = new ListRoomAdapter(roomList, requireContext(), new IRecyclerView() {
+        ListRoomAdapter listRoomAdapter = new ListRoomAdapter(roomList, OrderRoomActivity.this, new IRecyclerView() {
             @Override
             public void onItemClick(Room room) {
-                startActivity(new Intent(requireActivity(), BookingRoomActivity.class));
-
+                startActivity(new Intent(OrderRoomActivity.this, BookingRoomActivity.class));
+                finish();
 
             }
         });
-        binding.recyclerviewListRoom.setAdapter(listRoomAdapter);
+        binding.recyclerview.setAdapter(listRoomAdapter);
 
     }
 
     @Override
     public void onRoomLoadFailed(String message) {
         binding.progressBar.setVisibility(View.GONE);
-        Toast.makeText(requireContext(),message,Toast.LENGTH_SHORT).show();
+        Toast.makeText(OrderRoomActivity.this,message,Toast.LENGTH_SHORT).show();
 
     }
 }

@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.hotelmanager.databinding.RowItemListRoomBinding;
+import com.example.hotelmanager.listener.IRecyclerView;
 import com.example.hotelmanager.model.Room;
 
 import java.text.DecimalFormat;
@@ -18,17 +19,20 @@ public class ListRoomAdapter extends RecyclerView.Adapter<ListRoomAdapter.ViewHo
 
     List<Room> mList;
     Context context;
+    private IRecyclerView listener;
 
-    public ListRoomAdapter(List<Room> mList, Context context) {
+
+    public ListRoomAdapter(List<Room> mList, Context context,IRecyclerView listener) {
         this.mList = mList;
         this.context = context;
+        this.listener = listener;
     }
 
     @NonNull
     @Override
     public ListRoomAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
        RowItemListRoomBinding binding = RowItemListRoomBinding.inflate(LayoutInflater.from(parent.getContext()),parent,false);
-       return new ViewHolder(binding);
+       return new ViewHolder(binding,listener);
     }
 
     @Override
@@ -42,6 +46,7 @@ public class ListRoomAdapter extends RecyclerView.Adapter<ListRoomAdapter.ViewHo
                 .append(" VND"));
         holder.binding.tvLoaiRoom.setText(room.getRoomType());
 
+
     }
 
     @Override
@@ -53,9 +58,23 @@ public class ListRoomAdapter extends RecyclerView.Adapter<ListRoomAdapter.ViewHo
 
         RowItemListRoomBinding binding;
 
-        public ViewHolder(@NonNull RowItemListRoomBinding binding) {
+        private IRecyclerView listener;
+
+        public ViewHolder(@NonNull RowItemListRoomBinding binding, IRecyclerView listener) {
             super(binding.getRoot());
             this.binding = binding;
+            this.listener = listener;
+
+            itemView.setOnClickListener(v->{
+                if(listener != null){
+                    int position = getAdapterPosition();
+                    if(position != RecyclerView.NO_POSITION){
+                        listener.onItemClick(mList.get(position));
+                    }
+                }
+
+            });
+
         }
     }
 }
