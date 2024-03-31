@@ -38,5 +38,19 @@
         android:background="@color/bg_edt_login"
         android:layout_width="match_parent"
         android:layout_height="1dp"/>
+    <androidx.recyclerview.widget.RecyclerView
+        android:padding="5dp"
+        android:layout_below="@id/line_1"
+        android:id="@+id/recyclerview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+    <ProgressBar
+        android:indeterminateTint="@color/bg_splash"
+        android:indeterminate="true"
+        android:layout_centerInParent="true"
+        android:id="@+id/progress_bar"
+        android:visibility="gone"
+        android:layout_width="30dp"
+        android:layout_height="30dp"/>
 
 </RelativeLayout>

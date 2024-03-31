@@ -70,7 +70,7 @@
                    android:padding="10dp"
                    android:background="@drawable/custom_edt"
                    android:hint="Nhập tên phòng"
-                   android:inputType="textEmailAddress"
+                   android:inputType="number"
                    android:id="@+id/edt_name_room"
                    android:layout_width="match_parent"
                    android:layout_height="match_parent"/>
@@ -98,7 +98,7 @@
                    android:padding="10dp"
                    android:background="@drawable/custom_edt"
                    android:hint="Nhập giá thuê phòng  E.g: 200000"
-                   android:inputType="textEmailAddress"
+                   android:inputType="number"
                    android:id="@+id/edt_price_room"
                    android:layout_width="match_parent"
                    android:layout_height="match_parent"/>

@@ -10,6 +10,7 @@ public class Room {
     private List<String> listCheckBox;
     private List<String> images;
 
+
     public Room() {
     }
 
@@ -20,7 +21,9 @@ public class Room {
         this.descriptionRoom = descriptionRoom;
         this.listCheckBox = listCheckBox;
         this.images = images;
+
     }
+
 
     public String getRoomType() {
         return roomType;
@@ -69,4 +72,6 @@ public class Room {
     public void setImages(List<String> images) {
         this.images = images;
     }
+
+
 }

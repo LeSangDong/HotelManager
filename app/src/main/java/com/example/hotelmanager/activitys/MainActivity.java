@@ -40,10 +40,15 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             String fragmentToLoad = extras.getString("fragmentToLoad");
+            String fragmentToLoadBooked = extras.getString("fragmentToLoadBooked");
             if (fragmentToLoad != null && fragmentToLoad.equals("roomFragment")){
                 navController.navigate(R.id.roomFragment);
 
             }
+            if(fragmentToLoadBooked != null && fragmentToLoadBooked.equals("bookedFragment")){
+                navController.navigate(R.id.bookingFragment);
+            }
+
         }
 
     }

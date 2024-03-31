@@ -9,4 +9,6 @@
     <color name="black_custom">#01070F</color>
     <color name="email_color">#898C8F</color>
     <color name="grey">#7F7C7C</color>
+    <color name="red">#ff00</color>
+    <color name="booked_grey">#E1DBDB</color>
 </resources>

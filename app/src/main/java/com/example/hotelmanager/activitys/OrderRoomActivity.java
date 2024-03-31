@@ -15,6 +15,7 @@ import com.example.hotelmanager.adapter.ListRoomAdapter;
 import com.example.hotelmanager.databinding.ActivityOrderRoomBinding;
 import com.example.hotelmanager.listener.IRecyclerView;
 import com.example.hotelmanager.listener.IRoomLoadListener;
+import com.example.hotelmanager.model.Booking;
 import com.example.hotelmanager.model.Room;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -93,8 +94,11 @@ public class OrderRoomActivity extends AppCompatActivity implements IRoomLoadLis
         ListRoomAdapter listRoomAdapter = new ListRoomAdapter(roomList, OrderRoomActivity.this, new IRecyclerView() {
             @Override
             public void onItemClick(Room room) {
-                startActivity(new Intent(OrderRoomActivity.this, BookingRoomActivity.class));
-                finish();
+           Intent intent = new Intent(OrderRoomActivity.this, BookingRoomActivity.class);
+              intent.putExtra("roomName",room.getNameRoom());
+              intent.putExtra("roomPrice",room.getPriceRoom());
+              intent.putExtra("typeRoom",room.getRoomType());
+              startActivity(intent);
 
             }
         });
