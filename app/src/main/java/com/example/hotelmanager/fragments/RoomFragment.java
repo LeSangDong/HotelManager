@@ -15,9 +15,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.example.hotelmanager.R;
-import com.example.hotelmanager.activitys.BookingRoomActivity;
-import com.example.hotelmanager.activitys.UpdateRoomActivity;
 import com.example.hotelmanager.adapter.ListRoomAdapter;
 import com.example.hotelmanager.databinding.FragmentRoomBinding;
 import com.example.hotelmanager.listener.IRecyclerView;
@@ -40,6 +37,7 @@ public class RoomFragment extends Fragment implements IRoomLoadListener {
     IRoomLoadListener roomLoadListener;
     private NavController navController;
     private FirebaseAuth auth;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -68,10 +66,9 @@ public class RoomFragment extends Fragment implements IRoomLoadListener {
         List<Room> rooms = new ArrayList<>();
         if(currentUser != null){
             FirebaseDatabase.getInstance().getReference("Rooms").child(currentUser.getUid())
-                    .addValueEventListener(new ValueEventListener() {
+                    .addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot snapshot) {
-                            rooms.clear();
                             if(snapshot.exists()){
                                 for(DataSnapshot roomSnapshot : snapshot.getChildren()){
                                     Room room = roomSnapshot.getValue(Room.class);
@@ -110,17 +107,20 @@ public class RoomFragment extends Fragment implements IRoomLoadListener {
 
     @Override
     public void onRoomLoadSuccess(List<Room> roomList) {
+
         binding.progressBar.setVisibility(View.GONE);
+
 
         ListRoomAdapter listRoomAdapter = new ListRoomAdapter(roomList, requireContext(), new IRecyclerView() {
             @Override
             public void onItemClick(Room room) {
-                startActivity(new Intent(requireActivity(), UpdateRoomActivity.class));
+
 
 
             }
         });
         binding.recyclerviewListRoom.setAdapter(listRoomAdapter);
+
 
     }
 

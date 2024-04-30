@@ -20,13 +20,14 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.List;
 
 public class BookedAdapter extends RecyclerView.Adapter<BookedAdapter.ViewHolder> {
-    ArrayList<Booking> mBookings;
+    List<Booking> mBookings;
     Context context;
     private FirebaseAuth auth;
 
-    public BookedAdapter(ArrayList<Booking> mBookings) {
+    public BookedAdapter(List<Booking> mBookings) {
         this.mBookings = mBookings;
         auth = FirebaseAuth.getInstance();
     }
@@ -106,7 +107,7 @@ public class BookedAdapter extends RecyclerView.Adapter<BookedAdapter.ViewHolder
         }
     }
 
-    public void refreshList(ArrayList<Booking> newList){
+    public void refreshList(List<Booking> newList){
         newList.clear();
         mBookings.addAll(newList);
         notifyDataSetChanged();

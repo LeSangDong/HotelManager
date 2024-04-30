@@ -81,17 +81,22 @@ public class ListRoomAdapter extends RecyclerView.Adapter<ListRoomAdapter.ViewHo
                                    Booking booking =bookedSnapshot.getValue(Booking.class);
                                    assert booking != null;
                                    String nameRoom = booking.getNameRoom();
-                                   if(room.getNameRoom().equals(nameRoom)){
+                                   long checkSoNgay = booking.getSoNgayConLai();
+                                   if(room.getNameRoom().equals(nameRoom) && checkSoNgay >0){
                                        holder.itemView.setBackgroundColor(ContextCompat.getColor(context,R.color.booked_grey));
+                                       holder.binding.iconLock.setVisibility(View.VISIBLE);
                                        holder.itemView.setEnabled(false);
+                                       return;
                                    }
-                                   else {
-                                       holder.itemView.setEnabled(true);
-                                   }
+
 
                                }
 
                            }
+                           holder.itemView.setBackgroundColor(ContextCompat.getColor(context,R.color.white));
+                           holder.binding.iconLock.setVisibility(View.GONE);
+                           holder.itemView.setEnabled(true);
+
                        }
 
                        @Override

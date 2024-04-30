@@ -15,6 +15,9 @@
         android:theme="@style/Theme.HotelManager"
         tools:targetApi="31">
         <activity
+            android:name=".activitys.SeenImageActivity"
+            android:exported="false" />
+        <activity
             android:name=".activitys.BookSuccessActivity"
             android:exported="false" />
         <activity
